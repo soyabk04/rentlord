@@ -1,4 +1,4 @@
-const { Usermodel } = require('../models/User');
+const { Usermodel } = require('../Models/Usermodel');
 const jwt = require('jsonwebtoken')
 const { z } = require('zod')
 const { JWT_SECRET } = require('../Config/env_export')
@@ -72,4 +72,45 @@ async function signup(req, res) {
     
 
 }
+async function signin(req,res){
+        try { 
+        const requiredbody = z.object({
+        email: z.string().max(100).email(),
+        password: z.string().min(8).max(100)
+        })
+    const parsebodywithsucess=requiredbody.safeParse(req.body)
+    if(!parsebodywithsucess.success){
+        return res.status(400).send(parsebodywithsucess.error.issues)
 
+    }
+    const {email,password}=parsebodywithsucess.data
+    const user=await Usermodel.findOne({
+        email:email
+    })
+    if(!user){
+        return res.status(401).send({
+            message:"user not found"
+        })
+    }
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+        return res.status(401).send({
+            message:"wrong password"
+        })
+    }
+    res.send({
+        message:"login sucesssful",
+        userid:jwtconverter({
+  userid: user._id,
+  role: user.role
+},),
+    })
+}catch(e){
+      res.status(500).send({
+        message:"Internal server error"
+       
+      })
+}
+}
+
+module.exports = {signup,signin}
