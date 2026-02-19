@@ -15,3 +15,5 @@ const propertySchema= new mongoose.Schema({
         ,default:"residential"
     }
 })
+const Propertymodel=mongoose.model("Properties", propertySchema);
+module.exports = {Propertymodel}

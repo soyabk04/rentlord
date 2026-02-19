@@ -1,8 +1,9 @@
-const { Usermodel } = require('../Models/Usermodel');
+const { Usermodel } = require('../Models/User.model');
 const jwt = require('jsonwebtoken')
 const { z } = require('zod')
-const { JWT_SECRET } = require('../Config/env_export')
 const bcrypt = require('bcrypt')
+const { JWT_SECRET } = require('../Config/env_export')
+
 
 
 function jwtconverter(value) {
@@ -65,8 +66,10 @@ async function signup(req, res) {
         })
     })    }
     catch (err) {
+        console.error("SIGNUP ERROR:", err)
        return res.status(500).json({
    message: "Internal server error"
+   ,error:err.message
 })
     }
     
@@ -98,7 +101,7 @@ async function signin(req,res){
             message:"wrong password"
         })
     }
-    res.send({
+    res.status(201).send({
         message:"login sucesssful",
         userid:jwtconverter({
   userid: user._id,
@@ -108,6 +111,7 @@ async function signin(req,res){
 }catch(e){
       res.status(500).send({
         message:"Internal server error"
+        
        
       })
 }
