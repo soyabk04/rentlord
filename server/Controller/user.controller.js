@@ -21,34 +21,9 @@ async function passwordhashing(value) {
     }
 }
 async function signup(req, res) {
-        try { const requiredbody = z.object({
-        email: z.string().max(100).email(),
-        name: z.string().min(3).max(100),
-        password: z.string().min(8).max(100)
-            .regex(/[A-Z]/, "Must contain uppercase letter")
-            .regex(/[a-z]/, "Must contain lowercase letter")
-            .regex(/[0-9]/, "Must contain number")
-            .regex(/[@$!%*?&]/, "Must contain special character"),
-        role: z.enum(["owner", "tenant"], {
-            errorMap: () => ({ message: "Only owner and tenant roles are allowed" })
-        })
-    })
-    const parsebodywithsucess = requiredbody.safeParse(req.body)
-    if (!parsebodywithsucess.success) {
-        return res.status(400).send({
-            error: parsebodywithsucess.error.issues
-        })
-    }
-    const { email, name, password, role } = parsebodywithsucess.data
+        try { 
 
-    const isexits = await Usermodel.findOne({
-        email: email
-    })
-    if (isexits) {
-        return res.status(409).send({
-            message: 'user already exists'
-        })
-    }
+    const {email,name,password,role}=req.validateddata
     const hashedPassword = await passwordhashing(password)
     const user=await Usermodel.create({
         email: email,
@@ -77,16 +52,8 @@ async function signup(req, res) {
 }
 async function signin(req,res){
         try { 
-        const requiredbody = z.object({
-        email: z.string().max(100).email(),
-        password: z.string().min(8).max(100)
-        })
-    const parsebodywithsucess=requiredbody.safeParse(req.body)
-    if(!parsebodywithsucess.success){
-        return res.status(400).send(parsebodywithsucess.error.issues)
 
-    }
-    const {email,password}=parsebodywithsucess.data
+    const {email,password}=req.validateddata 
     const user=await Usermodel.findOne({
         email:email
     })
