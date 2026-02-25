@@ -47,9 +47,8 @@ const paymentSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    paidat: {
+    paidate: {
     type: Date,
-    required: true
 },
     status: {
     type: String,
@@ -59,4 +58,8 @@ const paymentSchema = new mongoose.Schema({
 
 
 })
-module.exports = mongoose.model("Payment", paymentSchema);
+
+const Paymentmodel = mongoose.model("Payment", paymentSchema);
+module.exports={
+    Paymentmodel
+}
