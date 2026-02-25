@@ -2,7 +2,6 @@ const express=require('express');
 const user=require('./Routes/user.Route')
 const property=require('./Routes/property.Route')
 const {main}=require('./Config/db')
-const mongoose=require('mongoose');
 const Lease = require('./Routes/Lease.Route');
 require("dotenv").config();
 
