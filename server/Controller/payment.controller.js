@@ -1,7 +1,7 @@
 const {Paymentmodel}=require('../Models/Payment.model')
 const {Leasemodel}=require('../Models/Lease.model')
 
-async function payment(req,res){
+async function payment(req,res,next){
     try {
     const { leaseId, year, month, dueDate, dueamount } = req.body;
 
@@ -36,7 +36,7 @@ async function payment(req,res){
     });
 
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    next(err)
   }
 }
 module.exports={payment}

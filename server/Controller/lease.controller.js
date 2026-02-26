@@ -71,11 +71,7 @@ async function createLease(req, res) {
         })
     }
     catch (err) {
-        console.error("SIGNUP ERROR:", err)
-        return res.status(500).json({
-            message: "Internal server error"
-            , error: err.message
-        })
+next(err)
     }
 }
 

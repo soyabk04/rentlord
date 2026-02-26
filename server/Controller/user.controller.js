@@ -1,47 +1,50 @@
 const { Usermodel } = require('../Models/User.model');
 const bcrypt = require('bcrypt')
-const passwordhashing = require('../utilitis/bcrypt')
-const jwtconverter = require('../utilitis/jwt')
+const passwordhashing = require('../utils/bcrypt')
+const jwtconverter = require('../utils/jwt')
 const { Otpmodel } = require('../Models/User.model');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer')
-const { SENDBIRD_API,FROM_EMAIL } = require('../Config/env_export')
+const { SENDBIRD_API, FROM_EMAIL } = require('../Config/env_export')
+const ApiError = require("../utils/AppError")
+
 
 
 
 function sendmail(email, otp) {
 
-try{
-    const transporter = nodemailer.createTransport({
-        host: "smtp.sendgrid.net",
-        port: 587,
-        secure: false,
-        auth: {
-            user: "apikey",
-            pass: SENDBIRD_API,
-        },
-    });
-
-
-    (async () => {
-        const info = await transporter.sendMail({
-            from: `"soyab" <${FROM_EMAIL}>`,
-            to: `${email}`,
-            subject: "Hello ✔",
-            text: `otp is ${otp}`,
-            html: `otp is ${otp}`,
+    try {
+        const transporter = nodemailer.createTransport({
+            host: "smtp.sendgrid.net",
+            port: 587,
+            secure: false,
+            auth: {
+                user: "apikey",
+                pass: SENDBIRD_API,
+            },
         });
 
-        console.log("Message sent:", info.messageId);
-    })();}catch(e){
+
+        (async () => {
+            const info = await transporter.sendMail({
+                from: `"soyab" <${FROM_EMAIL}>`,
+                to: `${email}`,
+                subject: "Hello ✔",
+                text: `otp is ${otp}`,
+                html: `otp is ${otp}`,
+            });
+
+            console.log("Message sent:", info.messageId);
+        })();
+    } catch (e) {
         console.error(e.response)
         res.send({
-            message:e.response
+            message: e.response
         })
     }
 }
 
-async function verifyEmail(req, res) {
+async function verifyEmail(req, res, next) {
     const { otp, email } = req.body
     const userOtp = await Otpmodel.findOne({
         email: email
@@ -79,16 +82,13 @@ async function otp(req, res, next) {
             otp: otp,
             expiresAt: Date.now() + 5 * 60 * 1000
         })
-        sendmail(req.body.email,otp)
+        sendmail(req.body.email, otp)
         res.send({
             message: "otp sent successfully"
         })
     }
     catch (e) {
-        console.error(e)
-        res.send({
-            message: "otp error"
-        })
+        next(e)
     }
 
 
@@ -117,16 +117,12 @@ async function signup(req, res, next) {
         next()
     }
     catch (err) {
-        console.error("SIGNUP ERROR:", err)
-        return res.status(500).json({
-            message: "Internal server error"
-            , error: err.message
-        })
+        next(err)
     }
 
 
 }
-async function signin(req, res) {
+async function signin(req, res, next) {
     try {
 
         const { email, password } = req.validateddata
@@ -134,9 +130,10 @@ async function signin(req, res) {
             email: email
         })
         if (!user) {
-            return res.status(401).send({
-                message: "user not found"
-            })
+            throw new ApiError(
+                404,
+                "User not found"
+            )
         }
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
@@ -152,11 +149,7 @@ async function signin(req, res) {
             },),
         })
     } catch (e) {
-        res.status(500).send({
-            message: "Internal server error"
-
-
-        })
+        next(e)
     }
 }
 

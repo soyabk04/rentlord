@@ -5,7 +5,7 @@ const { z } = require('zod');
 function jwtverify(value) {
     return jwt.verify(value, JWT_SECRET)
 }
-async function createproperty(req, res) {
+async function createproperty(req, res ,next) {
     try {
         const requiredbody = z.object({
             address: z.string(),
@@ -41,11 +41,7 @@ async function createproperty(req, res) {
         })
     }
     catch (err) {
-        console.error("SIGNUP ERROR:", err)
-       return res.status(500).json({
-   message: "Internal server error"
-   ,error:err.message
-})
+next(err)
     }
 }
 
