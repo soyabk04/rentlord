@@ -137,9 +137,11 @@ async function signin(req, res, next) {
         }
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
-            return res.status(401).send({
-                message: "wrong password"
-            })
+
+            throw new ApiError(
+                401,
+                "wrong password"
+            )
         }
         res.status(201).send({
             message: "login sucesssful",
