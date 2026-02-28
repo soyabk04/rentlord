@@ -61,6 +61,7 @@ async function createLease(req, res,next) {
             tenant, property, paymentMethod, deposit, rent, startDate, endDate, status, owner,
         })
         res.status(200).send({
+            success:true,
             message: "lease created sucessfully"
         })
     }

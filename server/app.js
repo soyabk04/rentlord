@@ -5,11 +5,18 @@ const {main}=require('./Config/db')
 const Lease = require('./Routes/Lease.Route');
 const Payment=require('./Routes/payment.Route')
 const {errorHandler}=require('./Middlewares/errorHandle.middleware')
+const cookieParser = require('cookie-parser');
+const cors=require('cors')
 require("dotenv").config();
 const app= express()
+app.use(cors({
+    origin: "http://localhost:5500",
+    credentials: true
+}));
 
 
 app.use(express.json())
+app.use(cookieParser());
 app.use('/user',user)
 app.use('/property',property)
 app.use('/lease',Lease)

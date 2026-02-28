@@ -29,6 +29,7 @@ async function createproperty(req, res ,next) {
             owner: owner
         })
         res.status(200).send({
+            success:true,
             message: "property added sucessfully"
             , name: property.name
         })

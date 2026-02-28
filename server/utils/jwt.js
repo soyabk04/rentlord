@@ -3,7 +3,7 @@ const { JWT_SECRET } = require('../Config/env_export')
 const { errorHandler } = require('../Middlewares/errorHandle.middleware')
 const ApiError = require('./AppError')
 
-function jwtconverter(value) {
+function jwtConverter(value) {
     try {
         const coded = jwt.sign(value, JWT_SECRET, { expiresIn: "7d" })
         return coded
@@ -34,4 +34,4 @@ function jwtDecoder(value) {
     }
 
 }
-module.exports = { jwtconverter, jwtDecoder }
+module.exports = { jwtConverter, jwtDecoder }

@@ -1,99 +1,20 @@
 const { Usermodel } = require('../Models/User.model');
 const bcrypt = require('bcrypt')
 const passwordhashing = require('../utils/bcrypt')
-const jwtconverter = require('../utils/jwt')
-const { Otpmodel } = require('../Models/User.model');
-const crypto = require('crypto');
-const nodemailer = require('nodemailer')
-const { SENDBIRD_API, FROM_EMAIL } = require('../Config/env_export')
-const ApiError = require("../utils/AppError")
+const { jwtConverter, jwtDecoder } = require('../utils/jwt')
+const ApiError = require("../utils/AppError");
 
-
-
-
-function sendmail(email, otp) {
-
-    try {
-        const transporter = nodemailer.createTransport({
-            host: "smtp.sendgrid.net",
-            port: 587,
-            secure: false,
-            auth: {
-                user: "apikey",
-                pass: SENDBIRD_API,
-            },
-        });
-
-
-        (async () => {
-            const info = await transporter.sendMail({
-                from: `"soyab" <${FROM_EMAIL}>`,
-                to: `${email}`,
-                subject: "Hello ✔",
-                text: `otp is ${otp}`,
-                html: `otp is ${otp}`,
-            });
-
-            console.log("Message sent:", info.messageId);
-        })();
-    } catch (e) {
-        console.error(e.response)
-        res.send({
-            message: e.response
-        })
-    }
-}
-
-async function verifyEmail(req, res, next) {
-    const { otp, email } = req.body
-    const userOtp = await Otpmodel.findOne({
-        email: email
-    })
-    const user = await Usermodel.findOne({
-        email: email
-    })
-    if (user.emailVerified) {
-        res.send({
-            message: "email is already verified"
-        })
-    }
-    if (String(otp) !== String(userOtp.otp)) {
-        res.send({
-            message: "incorrect otp"
-        })
-
-    }
-
-    user.emailVerified = true
-    await user.save()
-
-    await Otpmodel.deleteOne({
-        email
-    })
+function getuserdata(req, res, next) {
+    const token = jwtDecoder(req.cookies.token)
+    const user = Usermodel.findById(token.userId)
     res.send({
-        message: "emailverified"
+        name: user.name,
+        email: user.email,
+        role: user.role
     })
-}
-async function otp(req, res, next) {
-    try {
-        const otp = crypto.randomInt(100000, 999999)
-        const user = await Otpmodel.create({
-            email: req.body.email,
-            otp: otp,
-            expiresAt: Date.now() + 5 * 60 * 1000
-        })
-        sendmail(req.body.email, otp)
-        res.send({
-            message: "otp sent successfully"
-        })
-    }
-    catch (e) {
-        next(e)
-    }
 
 
 }
-
 async function signup(req, res, next) {
     try {
 
@@ -106,14 +27,11 @@ async function signup(req, res, next) {
             name: name,
             role: role,
         })
-
-        // res.status(200).send({
-        //     message: "signup successful",
-        //     token: jwtconverter({
-        //         userid: user._id,
-        //         role: user.role,
-        //     })
-        // })
+        const userid = jwtConverter({
+            userid: user._id,
+            role: user.role
+        })
+        req.userId = userid
         next()
     }
     catch (err) {
@@ -143,16 +61,22 @@ async function signin(req, res, next) {
                 "wrong password"
             )
         }
-        res.status(201).send({
-            message: "login sucesssful",
-            userid: jwtconverter({
+        const token=jwtConverter({
                 userid: user._id,
                 role: user.role
-            },),
+            },)
+        res.status(201).cookie("token", token, {
+            httpOnly: true,
+            secure: false, // MUST be false in localhost
+            sameSite: "lax"
+        }).send({
+            success: true,
+            message: "login sucesssful",
+            userid: token,
         })
     } catch (e) {
         next(e)
     }
 }
 
-module.exports = { signup, signin, otp, verifyEmail }
+module.exports = { signup, signin, getuserdata }

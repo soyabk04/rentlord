@@ -35,6 +35,7 @@ async function payment(req,res,next){
     });
 
     res.status(201).json({
+      success:true,
       message: "Monthly rent generated",
       payment,
     });
