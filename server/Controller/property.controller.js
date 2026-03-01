@@ -3,6 +3,7 @@ const { JWT_SECRET } = require('../Config/env_export')
 const jwt = require('jsonwebtoken')
 const { z } = require('zod');
 const ApiError = require('../utils/AppError');
+const {jwtDecoder}=require('../utils/jwt')
 
 async function createproperty(req, res ,next) {
     try {
@@ -15,7 +16,7 @@ async function createproperty(req, res ,next) {
         })
         const parsedbody = requiredbody.safeParse(req.body,)
         if (!parsedbody.success) {
-
+            throw new ApiError(401,parsedbody.error.issues)
          
         }
         const { name, address, type } = parsedbody.data
@@ -38,7 +39,36 @@ async function createproperty(req, res ,next) {
 next(err)
     }
 }
+async function userproperties(req,res,next){
+    try {    
+        const token = req.token
+        const userdata = jwtDecoder(token)
+
+        let properties = []
+
+        if(userdata.role === 'owner'){
+            properties = await Propertymodel.find({ owner: userdata.userid })
+        }
+
+        if(userdata.role === 'tenant'){
+            properties = await Propertymodel.find({ tenant: userdata.userid })
+        }
+        
+        if(properties.length === 0){
+            return next(new ApiError(404,'No properties found'))
+        }
+
+        res.status(200).json({
+            success:true,
+            data:properties
+        })
+
+    } catch(err){
+       console.error(err)
+        return next(err)
+    }
+}
 
 module.exports={
-    createproperty
+    createproperty,userproperties
 }

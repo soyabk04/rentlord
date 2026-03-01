@@ -1,8 +1,10 @@
 const express = require("express");
 const Lease= express.Router()
-const { createLease }=require('../Controller/lease.controller')
+const { createLease ,userleases}=require('../Controller/lease.controller')
 const {authLimiter}=require('../Middlewares/rateLimit.middleware')
-const {tokenChecker,authorize}=require('../Middlewares/auth')
-Lease.post('/create',tokenChecker,authorize("owner"),createLease)
+const {tokenCheck,authorize}=require('../Middlewares/auth')
+Lease.post('/create',tokenCheck,authorize("owner"),createLease)
+Lease.get('/data',tokenCheck,userleases)
+
 
 module.exports=Lease

@@ -44,4 +44,34 @@ async function payment(req,res,next){
     next(err)
   }
 }
-module.exports={payment}
+async function userpayments(req,res,next){
+    try {    
+        const token = req.token
+        const userdata = jwtDecoder(token)
+
+        let payments = []
+
+        if(userdata.role === 'owner'){
+            payments = await Paymentmodel.find({ owner: userdata.userid })
+        }
+
+        if(userdata.role === 'tenant'){
+            payments = await Paymentmodel.find({ tenant: userdata.userid })
+        }
+        
+        if(properties.length === 0){
+            return next(new ApiError(404,'No properties found'))
+        }
+
+        res.status(200).json({
+            success:true,
+            data:payments
+        })
+
+    } catch(err){
+       console.error(err)
+        return next(err)
+    }
+}
+
+module.exports={payment,userpayments}

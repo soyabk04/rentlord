@@ -4,17 +4,7 @@ const passwordhashing = require('../utils/bcrypt')
 const { jwtConverter, jwtDecoder } = require('../utils/jwt')
 const ApiError = require("../utils/AppError");
 
-function getuserdata(req, res, next) {
-    const token = jwtDecoder(req.cookies.token)
-    const user = Usermodel.findById(token.userId)
-    res.send({
-        name: user.name,
-        email: user.email,
-        role: user.role
-    })
 
-
-}
 async function signup(req, res, next) {
     try {
 
@@ -65,18 +55,32 @@ async function signin(req, res, next) {
                 userid: user._id,
                 role: user.role
             },)
-        res.status(201).cookie("token", token, {
-            httpOnly: true,
-            secure: false, // MUST be false in localhost
-            sameSite: "lax"
+        res.status(201).cookie("token", token,{
+            sameSite:'none',
+            secure:'false'
         }).send({
             success: true,
             message: "login sucesssful",
-            userid: token,
         })
     } catch (e) {
         next(e)
     }
 }
+async function userData(req,res,next){
+try{    
+    const token=req.token
 
-module.exports = { signup, signin, getuserdata }
+    const userid=jwtDecoder(token).userid
+    const user=await Usermodel.findById(userid).select('-password')
+    if(!user){
+        throw new ApiError(409,'user not found')
+    }
+    res.status(200).send({
+        success:true,
+        data:user
+    })}catch(err){
+        next(err)
+    }
+}
+
+module.exports = { signup, signin, userData }

@@ -1,8 +1,9 @@
 const express = require("express");
 const property= express.Router()
-const {createproperty}=require('../Controller/property.controller');
-const { tokenChecker, authorize } = require("../Middlewares/auth");
+const {createproperty,userproperties}=require('../Controller/property.controller');
+const { tokenCheck, authorize } = require("../Middlewares/auth");
 
-property.post('/create',tokenChecker,authorize("owner"),createproperty)
+property.post('/create',tokenCheck,authorize("owner"),createproperty)
+property.get('/data',tokenCheck,userproperties)
 
 module.exports=property
