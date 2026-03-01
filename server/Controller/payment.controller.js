@@ -4,7 +4,7 @@ const ApiError = require('../utils/AppError');
 
 async function payment(req,res,next){
     try {
-    const { leaseId, year, month, dueDate, dueamount } = req.body;
+    const { leaseId, year, month, dueDate, dueamount ,paidate, paymentMethod,status} = req.parsedbody.data;
 
     const lease = await Leasemodel.findById(leaseId);
     if (!lease) {
@@ -32,6 +32,9 @@ async function payment(req,res,next){
       month,
       dueDate,
       dueamount,
+      paidate,
+      paymentMethod,
+      status
     });
 
     res.status(201).json({

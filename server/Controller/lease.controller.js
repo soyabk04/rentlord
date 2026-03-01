@@ -10,25 +10,7 @@ function jwtverify(value) {
 }
 async function createLease(req, res,next) {
     try {
-        const requiredbody = z.object({
-            tenant: z.string(),
-            property: z.string(),
-            paymentMethod: z.enum(["cash", "card", "upi"], {
-                errorMap: () => ({ message: "Invalid payment method" })
-            })
-            , deposit: z.number(),
-            rent: z.number(),
-            startDate: z.coerce.date(),
-            endDate: z.coerce.date()
-            , status: z.enum(["active", "terminated", "expired"], {
-                errorMap: () => ({ message: "Invalid status" })
-            })
-        })
-        const parsedbody = requiredbody.safeParse(req.body,)
-        if (!parsedbody.success) {
-
-            throw new ApiError(401,parsedbody.error.issues)
-        }
+        const parsedbody=req.parsedbody
         const { tenant, property, paymentMethod, deposit, rent, startDate, endDate, status } = parsedbody.data
         const usertoken = req.headers.token
         if (!usertoken) {

@@ -7,18 +7,8 @@ const {jwtDecoder}=require('../utils/jwt')
 
 async function createproperty(req, res ,next) {
     try {
-        const requiredbody = z.object({
-            address: z.string(),
-            name: z.string(),
-            type: z.enum(["residential", "office", "industrial"], {
-                errorMap: () => ({ message: "Invalid property type" })
-            })
-        })
-        const parsedbody = requiredbody.safeParse(req.body,)
-        if (!parsedbody.success) {
-            throw new ApiError(401,parsedbody.error.issues)
-         
-        }
+        
+        const parsedbody=req.parsedbody
         const { name, address, type } = parsedbody.data
         const usertoken=req.user
 

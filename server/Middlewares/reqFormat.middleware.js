@@ -1,4 +1,4 @@
-const { z } = require('zod')
+const { z, number } = require('zod')
 async function signupFormat(req,res,next){
     const requiredbody = z.object({
             email: z.string().max(100).email(),
@@ -34,4 +34,67 @@ function signinFormat(req,res,next){
         req.validateddata = parsebodywithsucess.data
         next()
 }
-module.exports={signupFormat,signinFormat}
+function leaseFormat(req,res,next){
+            const requiredbody = z.object({
+                tenant: z.string(),
+                property: z.string(),
+                paymentMethod: z.enum(["cash", "card", "upi"], {
+                    errorMap: () => ({ message: "Invalid payment method" })
+                })
+                , deposit: z.number(),
+                rent: z.number(),
+                startDate: z.coerce.date(),
+                endDate: z.coerce.date()
+                , status: z.enum(["active", "terminated", "expired"], {
+                    errorMap: () => ({ message: "Invalid status" })
+                })
+            })
+            const parsedbody = requiredbody.safeParse(req.body,)
+            if (!parsedbody.success) {
+    
+                throw new ApiError(401,parsedbody.error.issues)
+            }
+            req.parsedbody=parsedbody
+            next()
+}
+function propertyFormat(req,res,next){
+            const requiredbody = z.object({
+            address: z.string(),
+            name: z.string(),
+            type: z.enum(["residential", "office", "industrial"], {
+                errorMap: () => ({ message: "Invalid property type" })
+            })
+        })
+        const parsedbody = requiredbody.safeParse(req.body,)
+        if (!parsedbody.success) {
+            throw new ApiError(401,parsedbody.error.issues)
+         
+        }
+        req.parsedbody=parsedbody
+        next()
+}
+function paymentFormat(req,res,next){
+            const requiredbody = z.object({
+            leaseId: z.string(),
+            year:z.number(),
+            month:z.number(),
+            paymentMethod: z.enum(["cash", "card", "upi"], {
+                errorMap: () => ({ message: "Invalid payment method type" })
+            }),
+            status: z.enum(["pending", "partial", "paid"], {
+                errorMap: () => ({ message: "invalid status type" })
+            })
+            ,paidate:z.date(),
+            dueDate:z.date(),
+            dueamount:z.number(),
+
+        })
+        const parsedbody = requiredbody.safeParse(req.body,)
+        if (!parsedbody.success) {
+            throw new ApiError(401,parsedbody.error.issues)
+         
+        }
+        req.parsedbody=parsedbody
+        next()
+}
+module.exports={signupFormat,signinFormat,leaseFormat,propertyFormat,paymentFormat}
