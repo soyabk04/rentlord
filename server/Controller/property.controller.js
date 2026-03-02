@@ -1,7 +1,4 @@
 const { Propertymodel } = require('../Models/Property.model');
-const { JWT_SECRET } = require('../Config/env_export')
-const jwt = require('jsonwebtoken')
-const { z } = require('zod');
 const ApiError = require('../utils/AppError');
 const {jwtDecoder}=require('../utils/jwt')
 
@@ -58,7 +55,49 @@ async function userproperties(req,res,next){
         return next(err)
     }
 }
+async function update(req,res,next) {
+try{      
+      const user=jwtDecoder(req.token).userid
+      const propertyId=req.headers.propertyId
+      const property=await Propertymodel.findById(propertyId)
+      if(!property){
+        throw new ApiError(404,'property not found')
+      }
+      if(user.toString()!==property.owner.toString()){
+        throw new ApiError(401,"property is not owned by you")
+      }
+      const data= req.parsedbody.data
+      const updateProperty=await Propertymodel.findByIdAndUpdate(propertyId,data)
+      res.status(200).send({
+        success:true,
+        message:'property added succesfully'
+      })}
+      catch(err){
+        next(err)
+      }
+}
+async function propertyDelete(req,res,next) {
+try{      
+      const user=jwtDecoder(req.token).userid
+      const propertyId=req.headers.propertyId
+      const property=await Propertymodel.findById(propertyId)
+      if(!property){
+        throw new ApiError(404,'property not found')
+      }
+      if(user.toString()!==property.owner.toString()){
+        throw new ApiError(401,"property is not owned by you")
+      }
+      const data= req.parsedbody.data
+      const updateProperty=await property.findByIdAndDelete(propertyId)
+      res.status(200).send({
+        success:true,
+        message:'property removed succesfully'
+      })}
+      catch(err){
+        next(err)
+      }
+}
 
 module.exports={
-    createproperty,userproperties
+    createproperty,userproperties,propertyDelete,update
 }

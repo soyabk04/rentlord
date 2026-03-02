@@ -8,7 +8,9 @@ const { errorHandler } = require('./errorHandle.middleware');
 
 function authorize(...roles) {
     return (req, res, next) => {
-        if (!roles.includes(req.user.role)) {
+            token=req.token
+    const user=jwtDecoder(token)
+        if (!roles.includes(user.role)) {
 
         }
         next()

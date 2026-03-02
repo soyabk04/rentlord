@@ -84,8 +84,8 @@ function paymentFormat(req,res,next){
             status: z.enum(["pending", "partial", "paid"], {
                 errorMap: () => ({ message: "invalid status type" })
             })
-            ,paidate:z.date(),
-            dueDate:z.date(),
+            ,paidate:z.coerce.date(),
+            dueDate:z.coerce.date(),
             dueamount:z.number(),
 
         })

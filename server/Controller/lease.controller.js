@@ -1,13 +1,8 @@
 const { Leasemodel } = require('../Models/Lease.model');
 const { Propertymodel } = require('../Models/Property.model');
 const { Usermodel } = require('../Models/User.model');
-const { JWT_SECRET } = require('../Config/env_export')
-const jwt = require('jsonwebtoken')
-const { z } = require('zod');
 const ApiError = require('../utils/AppError');
-function jwtverify(value) {
-    return jwt.verify(value, JWT_SECRET)
-}
+
 async function createLease(req, res,next) {
     try {
         const parsedbody=req.parsedbody
@@ -81,6 +76,28 @@ async function userleases(req,res,next){
         return next(err)
     }
 }
+async function leasedelete(req,res,next) {
+try{      
+      const user=jwtDecoder(req.token).userid
+      const leaseId=req.headers.leaseId
+      const lease=await Leasemodel.findById(leaseId)
+      if(!lease){
+        throw new ApiError(404,'lease not found')
+      }
+      if(user.toString()!==lease.owner.toString()){
+        throw new ApiError(401,"lease is not owned by you")
+      }
+      const data= req.parsedbody.data
+      const updatelease=await lease.delete(data)
+      res.status(200).send({
+        success:true,
+        message:'lease removed succesfully',
+        data:updatelease
+      })}
+      catch(err){
+        next(err)
+      }
+}
 module.exports = {
-    createLease,userleases
+    createLease,userleases,leasedelete
 }
