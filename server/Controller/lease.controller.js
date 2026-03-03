@@ -79,19 +79,39 @@ async function userleases(req,res,next){
 async function leasedelete(req,res,next) {
 try{      
       const user=jwtDecoder(req.token).userid
-      const leaseId=req.headers.leaseId
+      const leaseId=req.params.leaseId
       const lease=await Leasemodel.findById(leaseId)
       if(!lease){
         throw new ApiError(404,'lease not found')
       }
       if(user.toString()!==lease.owner.toString()){
-        throw new ApiError(401,"lease is not owned by you")
+        throw new ApiError(403,"lease is not owned by you")
       }
-      const data= req.parsedbody.data
-      const updatelease=await lease.delete(data)
+      await Leasemodel.findByIdAndDelete(leaseId)
       res.status(200).send({
         success:true,
         message:'lease removed succesfully',
+      })}
+      catch(err){
+        next(err)
+      }
+}
+async function update(req,res,next) {
+try{      
+      const user=jwtDecoder(req.token).userid
+      const leaseId=req.params.leaseId
+      const lease=await Leasemodel.findById(leaseId)
+      if(!lease){
+        throw new ApiError(404,'lease not found')
+      }
+      if(user.toString()!==lease.owner.toString()){
+        throw new ApiError(403,"lease is not owned by you")
+      }
+      const data= req.parsedbody.data
+      const updatelease=await lease.findByIdAndUpdate(lease,data)
+      res.status(200).send({
+        success:true,
+        message:'lease updated succesfully',
         data:updatelease
       })}
       catch(err){
@@ -99,5 +119,5 @@ try{
       }
 }
 module.exports = {
-    createLease,userleases,leasedelete
+    createLease,userleases,leasedelete,update
 }

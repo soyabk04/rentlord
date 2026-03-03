@@ -79,20 +79,20 @@ async function userpayments(req,res,next){
 async function update(req,res,next) {
 try{      
       const user=jwtDecoder(req.token).userid
-      const paymentId=req.headers.paymentId
+      const paymentId=req.params.paymentId
       const payment=await Paymentmodel.findById(paymentId)
       if(!payment){
         throw new ApiError(404,'payment not found')
       }
-      if(user.toString()!==property.owner.toString()){
+      if(user.toString()!==payment.owner.toString()){
         throw new ApiError(401,"payment is not owned by you")
       }
       const data= req.parsedbody.data
-      const updateProperty=await payment.findByIdAndUpdate(paymentId,data)
+      const updatepayment=await payment.findByIdAndUpdate(paymentId,data)
       res.status(200).send({
         success:true,
-        message:'property added succesfully',
-        data:updateProperty
+        message:'payment added succesfully',
+        data:updatepayment
       })}
       catch(err){
         next(err)
@@ -101,20 +101,19 @@ try{
 async function paymentdelete(req,res,next) {
 try{      
       const user=jwtDecoder(req.token).userid
-      const paymentId=req.headers.paymentId
+      const paymentId=req.params.paymentId
       const payment=await Paymentmodel.findById(paymentId)
       if(!payment){
         throw new ApiError(404,'payment not found')
       }
-      if(user.toString()!==property.owner.toString()){
-        throw new ApiError(401,"payment is not owned by you")
+      if(user.toString()!==payment.owner.toString()){
+        throw new ApiError(403,"payment is not owned by you")
       }
-      const data= req.parsedbody.data
-      const updateProperty=await payment.findByIdAndDelete(paymentId,data)
+      await payment.findByIdAndDelete(paymentId)
       res.status(200).send({
         success:true,
         message:'payment removed succesfully',
-        data:updateProperty
+     
       })}
       catch(err){
         next(err)
