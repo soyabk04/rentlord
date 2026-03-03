@@ -2,7 +2,7 @@ const express = require("express");
 const user = express.Router()
 const {signup,signin,userData}=require('../Controller/user.controller')
 const {signupFormat,signinFormat}=require('../Middlewares/reqFormat.middleware')
-const {isUser ,isSignedIn,tokenCheck}=require('../Middlewares/auth')
+const {isUser ,isSignedIn,tokenCheck}=require('../Middlewares/auth.middleware')
 const {authLimiter}=require('../Middlewares/rateLimit.middleware')
 const {otp,verifyEmail}=require('../utils/otp')
 

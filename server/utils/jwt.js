@@ -3,9 +3,9 @@ const { JWT_SECRET } = require('../Config/env_export')
 const { errorHandler } = require('../Middlewares/errorHandle.middleware')
 const ApiError = require('./AppError')
 
-function jwtConverter(value) {
+function jwtConverter(value,time) {
     try {
-        const coded = jwt.sign(value, JWT_SECRET, { expiresIn: "7d" })
+        const coded = jwt.sign(value, JWT_SECRET, { expiresIn: time })
         return coded
     }
     catch (err) {

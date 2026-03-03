@@ -1,13 +1,13 @@
 const { Propertymodel } = require('../Models/Property.model');
-const ApiError = require('../utils/AppError');
+const {ApiError} = require('../utils/AppError');
 const {jwtDecoder}=require('../utils/jwt')
-
 async function createproperty(req, res ,next) {
     try {
         
         const parsedbody=req.parsedbody
         const { name, address, type } = parsedbody.data
-        const usertoken=req.user
+        const usertoken=jwtDecoder(req.token)
+
 
         const owner = usertoken.userid
         const property = await Propertymodel.create({
@@ -56,9 +56,10 @@ async function userproperties(req,res,next){
     }
 }
 async function update(req,res,next) {
-try{      
+try{   
+    
       const user=jwtDecoder(req.token).userid
-      const propertyId=req.headers.propertyId
+      const propertyId=req.headers.propertyid
       const property=await Propertymodel.findById(propertyId)
       if(!property){
         throw new ApiError(404,'property not found')
@@ -79,7 +80,7 @@ try{
 async function propertyDelete(req,res,next) {
 try{      
       const user=jwtDecoder(req.token).userid
-      const propertyId=req.headers.propertyId
+      const propertyId=req.headers.propertyid
       const property=await Propertymodel.findById(propertyId)
       if(!property){
         throw new ApiError(404,'property not found')
@@ -87,8 +88,8 @@ try{
       if(user.toString()!==property.owner.toString()){
         throw new ApiError(401,"property is not owned by you")
       }
-      const data= req.parsedbody.data
-      const updateProperty=await property.findByIdAndDelete(propertyId)
+     
+     await Propertymodel.findByIdAndDelete(propertyId)
       res.status(200).send({
         success:true,
         message:'property removed succesfully'

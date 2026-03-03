@@ -1,17 +1,16 @@
-
-const ApiError = require('../utils/AppError');
+const {ApiError} = require('../utils/AppError');
 const { Usermodel } = require('../Models/User.model');
 const { jwtDecoder } = require('../utils/jwt');
-const { JWT_SECRET } = require('../Config/env_export')
-
-const { errorHandler } = require('./errorHandle.middleware');
 
 function authorize(...roles) {
     return (req, res, next) => {
-            token=req.token
+            const token=req.token
     const user=jwtDecoder(token)
         if (!roles.includes(user.role)) {
-
+            return res.status(403).send({
+                success:false,
+                message:'role is not valid'
+             })
         }
         next()
     }
@@ -23,11 +22,11 @@ function isSignedIn(req, res, next) {
     if (!token) return next();
 
     try {
-        jwtDecoder(token);
+    jwtDecoder(token)
         return next(new ApiError(409, "User already signed in"));
     } catch (err) {
-        // invalid or expired token → treat as not signed in
-        return next(err);
+       
+        return next();
     }
 }
 async function isUser(req, res, next) {
@@ -43,16 +42,17 @@ async function isUser(req, res, next) {
         }
     } catch (e) {
         e.message = "user authentication failed"
-        e.status = '201'
+        e.status = '500'
         next(e)
     }
     next()
 }
 function tokenCheck(req, res, next) {
-    const token = req.cookies.token
+    // const token = req.cookies.token
+    const token = req.headers.token
     // console.log(token)
     if (!token) {
-        return next(new ApiError(401, 'your are not logged in'))
+        return next(new ApiError(402, 'your are not logged in'))
 
 
     }

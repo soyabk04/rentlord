@@ -79,7 +79,7 @@ async function userleases(req,res,next){
 async function leasedelete(req,res,next) {
 try{      
       const user=jwtDecoder(req.token).userid
-      const leaseId=req.params.leaseId
+      const leaseId=req.headers.leaseId
       const lease=await Leasemodel.findById(leaseId)
       if(!lease){
         throw new ApiError(404,'lease not found')
@@ -99,7 +99,7 @@ try{
 async function update(req,res,next) {
 try{      
       const user=jwtDecoder(req.token).userid
-      const leaseId=req.params.leaseId
+      const leaseId=req.headers.leaseId
       const lease=await Leasemodel.findById(leaseId)
       if(!lease){
         throw new ApiError(404,'lease not found')

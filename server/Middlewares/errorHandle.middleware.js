@@ -8,7 +8,7 @@ function errorHandler (err, req, res, next) {
     message = "Duplicate field value entered"
   }
 
-  // Mongoose validation error
+
   if (err.name === "ValidationError") {
     statusCode = 400
     message = Object.values(err.errors)

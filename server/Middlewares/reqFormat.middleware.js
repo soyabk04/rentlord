@@ -1,4 +1,5 @@
 const { z, number } = require('zod')
+const {ApiError}=require('../utils/AppError')
 async function signupFormat(req,res,next){
     const requiredbody = z.object({
             email: z.string().max(100).email(),

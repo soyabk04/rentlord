@@ -79,7 +79,7 @@ async function userpayments(req,res,next){
 async function update(req,res,next) {
 try{      
       const user=jwtDecoder(req.token).userid
-      const paymentId=req.params.paymentId
+      const paymentId=req.headers.paymentId
       const payment=await Paymentmodel.findById(paymentId)
       if(!payment){
         throw new ApiError(404,'payment not found')
@@ -101,7 +101,7 @@ try{
 async function paymentdelete(req,res,next) {
 try{      
       const user=jwtDecoder(req.token).userid
-      const paymentId=req.params.paymentId
+      const paymentId=req.headers.paymentId
       const payment=await Paymentmodel.findById(paymentId)
       if(!payment){
         throw new ApiError(404,'payment not found')

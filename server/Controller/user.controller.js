@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const passwordhashing = require('../utils/bcrypt')
 const { jwtConverter, jwtDecoder } = require('../utils/jwt')
 const ApiError = require("../utils/AppError");
+const refreshAndaccess=require('../utils/refreshAndaccess')
 
 
 async function signup(req, res, next) {
@@ -43,6 +44,7 @@ async function signin(req, res, next) {
                 "User not found"
             )
         }
+        const {refreshToken,accessToken}=refreshAndaccess(user)
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
 
@@ -51,34 +53,35 @@ async function signin(req, res, next) {
                 "wrong password"
             )
         }
-        const token=jwtConverter({
-                userid: user._id,
-                role: user.role
-            },)
-        res.status(201).cookie("token", token,{
-            sameSite:'none',
-            secure:'false'
-        }).send({
+
+        res.cookie("token",refreshToken, {
+            httpOnly: true,
+            secure: false,        // true ONLY in production with HTTPS
+            sameSite: "lax"       // important for localhost
+        });
+
+        res.status(200).json({
             success: true,
-            message: "login sucesssful",
-        })
+            message: "Login successful",accessToken:accessToken
+        });
     } catch (e) {
         next(e)
     }
 }
-async function userData(req,res,next){
-try{    
-    const token=req.token
+async function userData(req, res, next) {
+    try {
+        const token = req.token
 
-    const userid=jwtDecoder(token).userid
-    const user=await Usermodel.findById(userid).select('-password')
-    if(!user){
-        throw new ApiError(409,'user not found')
-    }
-    res.status(200).send({
-        success:true,
-        data:user
-    })}catch(err){
+        const userid = jwtDecoder(token).userid
+        const user = await Usermodel.findById(userid).select('-password')
+        if (!user) {
+            throw new ApiError(409, 'user not found')
+        }
+        res.status(200).send({
+            success: true,
+            data: user
+        })
+    } catch (err) {
         next(err)
     }
 }
