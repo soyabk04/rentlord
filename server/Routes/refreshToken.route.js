@@ -1,7 +1,7 @@
 const express = require("express");
 const generaterefresh = require("../Controller/accessToken.controller");
-const refresh= express.Router()
+const refreshToken= express.Router()
 
-refresh.get("/",generaterefresh)
+refreshToken.get("/",generaterefresh)
 
 module.exports=refreshToken

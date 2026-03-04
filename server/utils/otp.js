@@ -12,7 +12,7 @@ async function otp(req, res, next) {
             otp: otp,
             expiresAt: Date.now() + 5 * 60 * 1000
         })
-        sendmail(req.body.email, otp)
+        sendmail(req.body.email,`otp is ${otp}`)
         res.send({
             success:true
         })

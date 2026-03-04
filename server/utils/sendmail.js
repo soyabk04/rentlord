@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer')
 const { SENDBIRD_API, FROM_EMAIL } = require('../Config/env_export')
-function sendmail(email, otp) {
+function sendmail(email, message) {
 
     try {
         const transporter = nodemailer.createTransport({
@@ -19,8 +19,8 @@ function sendmail(email, otp) {
                 from: `"soyab" <${FROM_EMAIL}>`,
                 to: `${email}`,
                 subject: "Hello ✔",
-                text: `otp is ${otp}`,
-                html: `otp is ${otp}`,
+                text: message,
+                html:message ,
             });
 
             console.log("Message sent:", info.messageId);
