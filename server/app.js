@@ -21,7 +21,7 @@ cron.schedule("0 0 1 * *", async () => {
   console.log("Running monthly rent generation...")
   await paymentGenerator()
 })
-cron.schedule("*/12 * * * * *", async () => {
+cron.schedule("0 * * * *", async () => {
   console.log(" sending rent reminders")
   await paymentReminder()
 })
