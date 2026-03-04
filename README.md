@@ -139,8 +139,8 @@ Create a `.env` file
 PORT=3000
 MONGO_URI=your_mongodb_connection
 JWT_SECRET=your_secret_key
-EMAIL_USER=your_email
-EMAIL_PASS=your_email_password
+FROM_EMAIL=your_email
+SENDBIRD_API=your_email_password
 ```
 
 Start the server
