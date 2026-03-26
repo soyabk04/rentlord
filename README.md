@@ -1,154 +1,240 @@
-<h1 align="center">🏠 Rentlord API</h1>
+# RentLord 🏠
 
-<p align="center">
-A secure, production-aware backend API for managing rental properties, tenants, and lease agreements.
-</p>
+A **Property Management Backend API** built with Node.js and Express that allows landlords to manage properties, leases, tenants, and rent payments efficiently.
 
-<hr/>
+---
 
-<h2>📌 Overview</h2>
-<p>
-Rentlord is a RESTful backend system built using <b>Node.js</b> and <b>Express</b>.  
-It implements authentication, role-based access control, input validation, and centralized error handling following structured MVC architecture.
-</p>
+# Overview
 
-<p>
-The project focuses on backend system design, middleware layering, and security best practices.
-</p>
+RentLord is a backend service designed to simplify property management.
+It enables property owners to manage tenants, track leases, generate monthly rent payments automatically, and send payment reminders.
 
-<hr/>
+The system includes authentication, role-based access control, scheduled payment generation, and email notifications.
 
-<h2>🚀 Tech Stack</h2>
-<ul>
-  <li>Node.js</li>
-  <li>Express.js</li>
-  <li>MongoDB (Mongoose ODM)</li>
-  <li>JWT Authentication</li>
-  <li>HTTP-only Cookies</li>
-  <li>Zod (Schema Validation)</li>
-  <li>bcrypt (Password Hashing)</li>
-  <li>Rate Limiting Middleware</li>
-</ul>
+---
 
-<hr/>
+# Features
 
-<h2>🧱 Architecture</h2>
+### Authentication & Authorization
 
-<pre>
+* JWT-based authentication
+* Refresh token system
+* Role-based access control (Admin, Owner, Tenant)
+
+### Property Management
+
+* Create and manage properties
+* View property listings
+* Property ownership control
+
+### Lease Management
+
+* Assign tenants to properties
+* Track lease start and end dates
+* Manage rental agreements
+
+### Payment System
+
+* Automatic monthly rent generation
+* Payment tracking
+* Payment status monitoring (paid/pending)
+
+### Automated Jobs
+
+* Monthly rent generation using scheduled jobs
+* Email reminders for pending rent payments
+
+---
+
+# Tech Stack
+
+Backend:
+
+* Node.js
+* Express.js
+
+Database:
+
+* MongoDB
+* Mongoose
+
+Authentication:
+
+* JSON Web Tokens (JWT)
+* Cookies
+
+Validation:
+
+* Zod
+
+Utilities:
+
+* node-cron (scheduled jobs)
+* bcrypt (password hashing)
+* nodemailer (email notifications)
+
+---
+
+# Project Structure
+
+```
 server/
 │
-├── Config/          
-├── Controllers/     
-├── Middlewares/     
-├── Models/          
-├── Routes/          
-├── utils/           
+├── Config/
+│   ├── db.js
+│   └── env_export.js
 │
-└── app.js           
-</pre>
+├── Controllers/
+│   ├── user.controller.js
+│   ├── property.controller.js
+│   ├── lease.controller.js
+│   └── payment.controller.js
+│
+├── Models/
+│   ├── User.model.js
+│   ├── Property.model.js
+│   ├── Lease.model.js
+│   └── Payment.model.js
+│
+├── Routes/
+│   ├── user.route.js
+│   ├── property.route.js
+│   ├── lease.route.js
+│   └── payment.route.js
+│
+├── Middlewares/
+│   ├── auth.middleware.js
+│   ├── errorHandle.middleware.js
+│   └── reqFormat.middleware.js
+│
+├── utils/
+│   ├── jwt.js
+│   ├── sendmail.js
+│   ├── paymentGenerator.js
+│   └── paymentReminder.js
+│
+└── app.js
+```
 
-<ul>
-  <li>Controllers handle request/response lifecycle</li>
-  <li>Validation occurs before controller execution</li>
-  <li>Authentication handled via middleware</li>
-  <li>Errors standardized using custom AppError class</li>
-  <li>JWT stored in HTTP-only cookies</li>
-</ul>
+---
 
-<hr/>
+# Installation
 
-<h2>🔐 Authentication & Authorization</h2>
-<ul>
-  <li>JWT-based authentication</li>
-  <li>Token stored in HTTP-only cookies</li>
-  <li>Role-based access control (Owner / Tenant)</li>
-  <li>Password hashing with bcrypt + salt</li>
-  <li>Protected routes via middleware</li>
-</ul>
+Clone the repository
 
-<hr/>
+```
+git clone https://github.com/soyabk04/rentlord.git
+cd rentlord
+```
 
-<h2>👥 User Roles</h2>
+Install dependencies
 
-<h3>Owner</h3>
-<ul>
-  <li>Create and manage properties</li>
-  <li>Assign tenants</li>
-  <li>Manage lease records</li>
-</ul>
-
-<h3>Tenant</h3>
-<ul>
-  <li>View assigned properties</li>
-  <li>Access lease details</li>
-</ul>
-
-<hr/>
-
-<h2>🛡 Security Features</h2>
-<ul>
-  <li>Zod schema validation</li>
-  <li>Centralized error handling</li>
-  <li>Rate limiting protection</li>
-  <li>Password hashing with salt</li>
-  <li>Environment-based secret management</li>
-  <li>Secure cookie handling</li>
-</ul>
-
-<hr/>
-
-<h2>⚙️ Environment Setup</h2>
-
-<pre>
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
-JWT_EXPIRES=1d
-</pre>
-
-<hr/>
-
-<h2>▶️ Installation</h2>
-
-<pre>
+```
 npm install
-npm run dev
-</pre>
+```
 
-<hr/>
+Create a `.env` file
 
-<h2>📡 API Base Routes</h2>
+```
+PORT=3000
+MONGO_URI=your_mongodb_connection
+JWT_SECRET=your_secret_key
+FROM_EMAIL=your_email
+SENDBIRD_API=your_email_password
+```
 
-<pre>
-/api/users
-/api/properties
-/api/leases
-</pre>
+Start the server
 
-<hr/>
+```
+npm start
+```
 
-<h2>🧠 What This Project Demonstrates</h2>
-<ul>
-  <li>Backend architecture design</li>
-  <li>Secure authentication flow</li>
-  <li>Middleware-driven request lifecycle</li>
-  <li>Structured error propagation</li>
-  <li>Production-aware development practices</li>
-</ul>
+The server will run on
 
-<hr/>
+```
+http://localhost:3000
+```
 
-<h2>📈 Future Enhancements</h2>
-<ul>
-  <li>Refresh token implementation</li>
-  <li>Service layer refactor</li>
-  <li>Unit & integration testing</li>
-  <li>Dockerization</li>
-  <li>CI/CD integration</li>
-</ul>
+---
 
-<hr/>
+# API Endpoints
 
-<p align="center">
-Built with focus on clean architecture and backend fundamentals.
-</p>
+### Authentication
+
+```
+POST /users/signup
+POST /users/login
+POST /users/logout
+```
+
+### Properties
+
+```
+POST /property
+GET /property
+DELETE /property/:propertyId
+```
+
+### Leases
+
+```
+POST /lease
+GET /lease
+DELETE /lease/:leaseId
+```
+
+### Payments
+
+```
+GET /payment
+POST /payment/pay
+DELETE /payment/:paymentId
+```
+
+---
+
+# Scheduled Jobs
+
+RentLord uses scheduled background jobs to automate rent tracking.
+
+Monthly Rent Generation
+Automatically creates rent payments on the first day of every month.
+
+Payment Reminder System
+Sends reminder emails for pending payments.
+
+---
+
+# Security Features
+
+* Password hashing using bcrypt
+* JWT-based authentication
+* Role-based authorization
+* Request validation with Zod
+* Rate limiting middleware
+
+---
+
+# Future Improvements
+
+* API documentation using Swagger
+* Pagination for large datasets
+* Unit and integration testing
+* Deployment configuration
+* Frontend dashboard integration
+
+---
+
+# Author
+
+Soyab
+Backend Developer
+
+GitHub: https://github.com/soyabk04
+LinkedIn: https://www.linkedin.com/in/ken002/
+
+---
+
+# License
+
+This project is licensed under the MIT License.
