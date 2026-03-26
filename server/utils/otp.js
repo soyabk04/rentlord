@@ -14,7 +14,8 @@ async function otp(req, res, next) {
         })
         sendmail(req.body.email,`otp is ${otp}`)
         res.send({
-            success:true
+            success:true,
+            otp:'otp sent to '+req.body.email
         })
     }
     catch (e) {

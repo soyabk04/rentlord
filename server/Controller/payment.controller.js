@@ -6,36 +6,7 @@ async function payment(req,res,next){
     try {
     const { leaseId, year, month, dueDate, dueamount ,paidate, paymentMethod,status} = req.parsedbody.data;
 
-    const lease = await Leasemodel.findById(leaseId);
-    if (!lease) {
-      throw new ApiError(404,"lease not found")
-    }
-
-  
-    const exists = await Paymentmodel.findOne({
-      lease: leaseId,
-      year,
-      month,
-    });
-
-    if (exists) {
-     
-      throw new ApiError(404,"Payment already exists for this month")
-    }
-
-    const payment = await Paymentmodel.create({
-      tenant: lease.tenant,
-      owner: lease.owner,
-      property: lease.property,
-      lease: leaseId,
-      year,
-      month,
-      dueDate,
-      dueamount,
-      paidate,
-      paymentMethod,
-      status
-    });
+   const payment=await createPayment(leaseId, year, month, dueDate, dueamount ,paidate, paymentMethod,status)
 
     res.status(201).json({
       success:true,

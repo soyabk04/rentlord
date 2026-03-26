@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer')
 const { SENDBIRD_API, FROM_EMAIL } = require('../Config/env_export')
 function sendmail(email, message) {
-
+     console.log(message)
     try {
         const transporter = nodemailer.createTransport({
             host: "smtp.sendgrid.net",

@@ -6,6 +6,7 @@ const ApiError = require('./AppError')
 function jwtConverter(value,time) {
     try {
         const coded = jwt.sign(value, JWT_SECRET, { expiresIn: time })
+        console.log(coded)
         return coded
     }
     catch (err) {

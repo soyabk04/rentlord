@@ -13,6 +13,7 @@ const paymentReminder=require('./utils/paymentReminder')
 const cors=require('cors')
 require("dotenv").config();
 const app= express()
+const expireLease=require('./utils/leaseExpiry')
 app.use(cors({
     origin: "http://localhost:5500",
     credentials: true
@@ -21,10 +22,15 @@ cron.schedule("0 0 1 * *", async () => {
   console.log("Running monthly rent generation...")
   await paymentGenerator()
 })
-cron.schedule("0 * * * *", async () => {
+cron.schedule("* 0 * * *", async () => {
   console.log(" sending rent reminders")
   await paymentReminder()
 })
+
+cron.schedule("0 0 * * *", async () => {
+  console.log('Lease updation......')
+    await expireLease();
+});
 
 app.use(express.json())
 app.use(cookieParser());

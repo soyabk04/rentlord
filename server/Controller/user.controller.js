@@ -3,26 +3,18 @@ const bcrypt = require('bcrypt')
 const passwordhashing = require('../utils/bcrypt')
 const { jwtConverter, jwtDecoder } = require('../utils/jwt')
 const ApiError = require("../utils/AppError");
-const refreshAndaccess=require('../utils/refreshAndaccess')
+const refreshAndaccess=require('../utils/refreshAndaccess');
+const { createUser,userSignin } = require('../services/user.service');
+
 
 
 async function signup(req, res, next) {
     try {
 
-        const { email, name, password, role } = req.validateddata
+        const {  email, name, password, role} = req.validateddata
         const hashedPassword = await passwordhashing(password)
-        const user = await Usermodel.create({
-            email: email,
-            password: hashedPassword
-            ,
-            name: name,
-            role: role,
-        })
-        const userid = jwtConverter({
-            userid: user._id,
-            role: user.role
-        })
-        req.userId = userid
+        const user = await createUser(email, name, hashedPassword, role)
+        req.userId = user._id
         next()
     }
     catch (err) {
@@ -35,24 +27,10 @@ async function signin(req, res, next) {
     try {
 
         const { email, password } = req.validateddata
-        const user = await Usermodel.findOne({
-            email: email
-        })
-        if (!user) {
-            throw new ApiError(
-                404,
-                "User not found"
-            )
-        }
+        const user=await userSignin(email,password)
+        
         const {refreshToken,accessToken}=refreshAndaccess(user)
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) {
 
-            throw new ApiError(
-                401,
-                "wrong password"
-            )
-        }
 
         res.cookie("token",refreshToken, {
             httpOnly: true,
@@ -71,7 +49,6 @@ async function signin(req, res, next) {
 async function userData(req, res, next) {
     try {
         const token = req.token
-
         const userid = jwtDecoder(token).userid
         const user = await Usermodel.findById(userid).select('-password')
         if (!user) {

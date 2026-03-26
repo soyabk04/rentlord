@@ -1,19 +1,21 @@
 const express = require("express");
 const user = express.Router()
-const {signup,signin,userData}=require('../Controller/user.controller')
-const {signupFormat,signinFormat}=require('../Middlewares/reqFormat.middleware')
-const {isUser ,isSignedIn,tokenCheck}=require('../Middlewares/auth.middleware')
-const {authLimiter}=require('../Middlewares/rateLimit.middleware')
-const {otp,verifyEmail}=require('../utils/otp')
+const { signup, signin, userData } = require('../Controller/user.controller')
+const { signupFormat, signinFormat } = require('../Middlewares/reqFormat.middleware')
+const { isUser, isSignedIn, tokenCheck,checklogin } = require('../Middlewares/auth.middleware')
+const { authLimiter } = require('../Middlewares/rateLimit.middleware')
+const { otp, verifyEmail } = require('../utils/otp');
+const { jwtDecoder } = require("../utils/jwt");
 
 
 
-user.post('/signup',authLimiter,isSignedIn,signupFormat,isUser,signup,otp)
-user.post('/sendotp',authLimiter,otp)
-user.post('/verify',verifyEmail)
-user.get('/profile',tokenCheck,userData)
 
-user.post('/signin',authLimiter,isSignedIn,signinFormat,signin)
+user.post('/api/signup', authLimiter, isSignedIn, signupFormat, isUser, signup, otp)
+user.post('/api/sendotp', authLimiter, otp)
+user.post('/api/verify', verifyEmail)
+user.get('/api/profile', tokenCheck, userData)
+user.get("/check-login", checklogin);
+user.post('/api/signin', authLimiter, isSignedIn, signinFormat, signin)
 
 
-module.exports=user
+module.exports = user

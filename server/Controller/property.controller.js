@@ -10,12 +10,7 @@ async function createproperty(req, res ,next) {
 
 
         const owner = usertoken.userid
-        const property = await Propertymodel.create({
-            name: name,
-            address: address,
-            type: type,
-            owner: owner
-        })
+        const property=await createproperty(name,address,type,owner)
         res.status(200).send({
             success:true,
             message: "property added sucessfully"

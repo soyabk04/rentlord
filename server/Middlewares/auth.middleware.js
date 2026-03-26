@@ -59,5 +59,21 @@ function tokenCheck(req, res, next) {
     req.token = token
     next()
 }
+function checklogin(req, res) {
 
-module.exports = {  authorize, isUser, isSignedIn, tokenCheck }
+    const token = req.cookies.token
+
+    if (!token) {
+        return res.json({ loggedIn: false })
+    }
+
+    try {
+        const loggin= jwtDecoder(token);
+        res.json({ loggedIn: true, user: loggin })
+
+    } catch(e) {
+        res.json({ loggedIn: false ,message:e.message})
+    }
+
+}
+module.exports = {  authorize, isUser, isSignedIn, tokenCheck,checklogin }
