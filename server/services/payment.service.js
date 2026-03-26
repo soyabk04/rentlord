@@ -34,3 +34,41 @@ async function createPayment(leaseId, year, month, dueDate, dueamount ,paidate, 
     });
     return payment
 }
+async function userpaymentsservice(userdata){
+          let payments = []
+
+        if(userdata.role === 'owner'){
+            payments = await Paymentmodel.find({ owner: userdata.userid })
+        }
+
+        if(userdata.role === 'tenant'){
+            payments = await Paymentmodel.find({ tenant: userdata.userid })
+        }
+        
+        if(properties.length === 0){
+            return next(new ApiError(404,'No properties found'))
+        }
+        return payments
+}
+async function upadatepayment(user,paymentId,data){
+        const payment=await Paymentmodel.findById(paymentId)
+        if(!payment){
+          throw new ApiError(404,'payment not found')
+        }
+        if(user.toString()!==payment.owner.toString()){
+          throw new ApiError(401,"payment is not owned by you")
+        }
+        const updatepayment=await payment.findByIdAndUpdate(paymentId,data)
+        return upadatepayment
+}
+async function paymentdeleteservice(paymentId,user){
+        const payment=await Paymentmodel.findById(paymentId)
+      if(!payment){
+        throw new ApiError(404,'payment not found')
+      }
+      if(user.toString()!==payment.owner.toString()){
+        throw new ApiError(403,"payment is not owned by you")
+      }
+      await payment.findByIdAndDelete(paymentId)
+}
+module.exports={userpaymentsservice,createPayment ,upadatepayment,paymentdeleteservice}
