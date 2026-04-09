@@ -15,7 +15,7 @@ require("dotenv").config();
 const app= express()
 const expireLease=require('./utils/leaseExpiry')
 app.use(cors({
-    origin: "http://localhost:5500",
+    origin: "http://localhost:5173",
     credentials: true
 }));
 cron.schedule("0 0 1 * *", async () => {

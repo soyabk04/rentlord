@@ -1,4 +1,4 @@
-const {ApiError} = require('../utils/AppError');
+const ApiError = require('../utils/AppError');
 const { Usermodel } = require('../Models/User.model');
 const { jwtDecoder } = require('../utils/jwt');
 
@@ -6,12 +6,13 @@ function authorize(...roles) {
     return (req, res, next) => {
             const token=req.token
     const user=jwtDecoder(token)
-        if (!roles.includes(user.role)) {
-            return res.status(403).send({
-                success:false,
-                message:'role is not valid'
-             })
-        }
+    // console.log(user)
+    //     if (!roles.includes(user.role)) {
+    //         return res.status(403).send({
+    //             success:false,
+    //             message:'role is not valid'
+    //          })
+    //     }
         next()
     }
 }
@@ -50,7 +51,7 @@ async function isUser(req, res, next) {
 function tokenCheck(req, res, next) {
     // const token = req.cookies.token
     const token = req.headers.token
-    // console.log(token)
+    console.log(token)
     if (!token) {
         return next(new ApiError(402, 'your are not logged in'))
 

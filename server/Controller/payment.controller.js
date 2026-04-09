@@ -1,7 +1,7 @@
 const {Paymentmodel}=require('../Models/Payment.model')
 const {Leasemodel}=require('../Models/Lease.model');
 const ApiError = require('../utils/AppError');
-const { userpaymentsservice, createPayment, upadatepayment } = require('../services/payment.service');
+const { userpaymentsservice, createPayment, updatepayment } = require('../services/payment.service');
 
 async function payment(req,res,next){
     try {
@@ -41,7 +41,7 @@ try{
       const user=jwtDecoder(req.token).userid
       const paymentId=req.headers.paymentId
       const data= req.parsedbody.data
-      const upadatepayment=await upadatepayment( user,paymentId,data)
+      const upadatepayment=await updatepayment( user,paymentId,data)
 
       res.status(200).send({
         success:true,

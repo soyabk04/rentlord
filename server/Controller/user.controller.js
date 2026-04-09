@@ -5,6 +5,7 @@ const { jwtConverter, jwtDecoder } = require('../utils/jwt')
 const ApiError = require("../utils/AppError");
 const refreshAndaccess=require('../utils/refreshAndaccess');
 const { createUser,userSignin } = require('../services/user.service');
+const { success } = require('zod');
 
 
 
@@ -62,5 +63,18 @@ async function userData(req, res, next) {
         next(err)
     }
 }
-
-module.exports = { signup, signin, userData }
+const logout= (req, res,next) => {
+try{    res.clearCookie('token', { 
+        httpOnly: true, 
+        secure: false,
+        sameSite: "lax",
+        path: '/'
+    });
+    res.send({success:true,
+        message:'logged out'
+    });}
+    catch(err){
+        next(err)
+    }
+}
+module.exports = { signup, signin, userData,logout }

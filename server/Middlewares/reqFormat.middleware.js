@@ -36,6 +36,7 @@ function signinFormat(req,res,next){
         next()
 }
 function leaseFormat(req,res,next){
+    
             const requiredbody = z.object({
                 tenant: z.string(),
                 property: z.string(),
@@ -58,21 +59,23 @@ function leaseFormat(req,res,next){
             req.parsedbody=parsedbody
             next()
 }
-function propertyFormat(req,res,next){
-            const requiredbody = z.object({
-            address: z.string(),
-            name: z.string(),
-            type: z.enum(["residential", "office", "industrial"], {
-                errorMap: () => ({ message: "Invalid property type" })
-            })
-        })
-        const parsedbody = requiredbody.safeParse(req.body,)
-        if (!parsedbody.success) {
-            throw new ApiError(401,parsedbody.error.issues)
-         
-        }
-        req.parsedbody=parsedbody
-        next()
+function propertyFormat(req, res, next) {
+  const requiredbody = z.object({
+    address: z.string(),
+    name: z.string(),
+    type: z.enum(["residential", "office", "industrial"], {
+      errorMap: () => ({ message: "Invalid property type" })
+    })
+  })
+
+  const parsedbody = requiredbody.safeParse(req.body)
+
+  if (!parsedbody.success) {
+    return next(new ApiError(401, parsedbody.error.issues))
+  }
+
+  req.parsedbody = parsedbody.data  // ✅ cleaner
+  next()
 }
 function paymentFormat(req,res,next){
             const requiredbody = z.object({

@@ -1,6 +1,8 @@
 const {Paymentmodel}=require('../Models/Payment.model')
 const {Leasemodel}=require('../Models/Lease.model');
 const ApiError = require('../utils/AppError');
+
+
 async function createPayment(leaseId, year, month, dueDate, dueamount ,paidate, paymentMethod,status) {
      const lease = await Leasemodel.findById(leaseId);
     if (!lease) {
@@ -50,7 +52,7 @@ async function userpaymentsservice(userdata){
         }
         return payments
 }
-async function upadatepayment(user,paymentId,data){
+async function updatepayment(user,paymentId,data){
         const payment=await Paymentmodel.findById(paymentId)
         if(!payment){
           throw new ApiError(404,'payment not found')
@@ -71,4 +73,4 @@ async function paymentdeleteservice(paymentId,user){
       }
       await payment.findByIdAndDelete(paymentId)
 }
-module.exports={userpaymentsservice,createPayment ,upadatepayment,paymentdeleteservice}
+module.exports={userpaymentsservice,createPayment ,updatepayment,paymentdeleteservice}

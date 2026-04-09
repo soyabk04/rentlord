@@ -1,16 +1,17 @@
 const { Propertymodel } = require('../Models/Property.model');
+const { createPropertyService } = require('../services/property.service');
 const {ApiError} = require('../utils/AppError');
 const {jwtDecoder}=require('../utils/jwt')
 async function createproperty(req, res ,next) {
     try {
         
         const parsedbody=req.parsedbody
-        const { name, address, type } = parsedbody.data
+        const { name, address, type } = parsedbody
         const usertoken=jwtDecoder(req.token)
 
 
         const owner = usertoken.userid
-        const property=await createproperty(name,address,type,owner)
+        const property=await createPropertyService(name,address,type,owner)
         res.status(200).send({
             success:true,
             message: "property added sucessfully"

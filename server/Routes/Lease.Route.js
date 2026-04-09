@@ -4,9 +4,9 @@ const { createLease ,userleases,update,leasedelete}=require('../Controller/lease
 const {authLimiter}=require('../Middlewares/rateLimit.middleware')
 const {tokenCheck,authorize}=require('../Middlewares/auth.middleware')
 const {leaseFormat}=require('../Middlewares/reqFormat.middleware')
-Lease.post('/',tokenCheck,authorize("owner"),leaseFormat,createLease)
-Lease.post('/update',tokenCheck,authorize("owner"),leaseFormat,update)
-Lease.post('/delete',tokenCheck,authorize("owner"),leasedelete)
+Lease.post('/',tokenCheck,leaseFormat,createLease)
+Lease.patch('/update',tokenCheck,leaseFormat,update)
+Lease.delete('/delete',tokenCheck,authorize("owner"),leasedelete)
 Lease.get('/',tokenCheck,userleases)
 
 
