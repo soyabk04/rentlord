@@ -31,7 +31,9 @@ cron.schedule("0 0 * * *", async () => {
   console.log('Lease updation......')
     await expireLease();
 });
-
+app.get('/',(req,res)=>{
+    res.send('welcome to property management system')
+})
 app.use(express.json())
 app.use(cookieParser());
 app.use('/user',user)
