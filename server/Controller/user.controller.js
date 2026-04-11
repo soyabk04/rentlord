@@ -33,11 +33,11 @@ async function signin(req, res, next) {
         const {refreshToken,accessToken}=refreshAndaccess(user)
 
 
-        res.cookie("token",refreshToken, {
-            httpOnly: true,
-            secure: false,        // true ONLY in production with HTTPS
-            sameSite: "lax"       // important for localhost
-        });
+res.cookie("token", refreshToken, {
+  httpOnly: true,
+  secure: true,         
+  sameSite: "none"
+});
 
         res.status(200).json({
             success: true,
