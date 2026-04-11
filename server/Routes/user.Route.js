@@ -15,7 +15,7 @@ user.post('/api/signup', authLimiter, isSignedIn, signupFormat, isUser, signup, 
 user.post('/api/sendotp', authLimiter, otp)
 user.post('/api/verify', verifyEmail)
 user.get('/api/profile', tokenCheck, userData)
-user.get("/check-login", checklogin);
+user.get("/api/check-login", checklogin);
 user.post('/api/signin', authLimiter, isSignedIn, signinFormat, signin)
 user.post('/api/logout',tokenCheck,logout)
 user.get('/api/dashboard',tokenCheck,getDashboard)
